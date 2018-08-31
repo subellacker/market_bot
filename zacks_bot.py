@@ -12,6 +12,7 @@ class WebsiteScraper:
         self.base_url = base_url
         self.stocks_set = set() 
 
+        self.current_date = datetime.date.today().strftime('%B %d, %Y')
     def open_url(self, url):
         try:
             response = requests.get(url, headers={'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.95 Safari/537.36'})
@@ -84,11 +85,11 @@ class ZacksScraper(WebsiteScraper):
             article_date = soup.find("time").text.strip()
             article_title = str(soup.title.string)
             is_title_valid = "strong" in article_title.lower() and "buy" in article_title.lower()
-            is_date_valid = article_date == current_date 
+            is_date_valid = article_date == self.current_date 
             is_article_verified = is_date_valid and is_title_valid 
             {self.stocks_set.add(str(i.text.strip())) for i in soup.findAll("span", {"class": "hoverquote-symbol"})};
             
-            print("System date: " + str(current_date))
+            print("System date: " + str(self.current_date))
             print("Article date: " + str(article_date))
             print("Dates match: " + str(is_article_verified))
             print("Article Title: " +str(soup.title.string))
@@ -99,49 +100,45 @@ class ZacksScraper(WebsiteScraper):
             print(e)
             return False
     
-current_date = datetime.date.today().strftime('%B %d, %Y')
-#next_day = (datetime.date.today() + datetime.timedelta(days=1)).strftime('%B %d, %Y')
 
+#Open url and parse stocks to buy
+stocks_set = set() 
+zacks_scraper = ZacksScraper("https://www.zacks.com/stocks/zacks-rank")
 
 while True:
-   #Open url and parse stocks to buy
-    stocks_set = set() 
-    zacks_scraper = ZacksScraper("https://www.zacks.com/stocks/zacks-rank")
- 
-    while True:
-        if zacks_scraper.is_website_scraped():
-            stocks_set.add(zacks_scraper.return_stocks())
-            zacks_scraper.print_stocks()
-            break
-    
-    #init stock dict
-    bought_stocks = {}
-    cross_verified_stocks = {}
-    for i in stocks_set:
-        for j in i:
-            if j not in bought_stocks:
-                bought_stocks[j] = Stock(j).get_price()
-    print("Bought these stocks: ")
-    print(bought_stocks)
-    print("----------------------------------------------------------------------------------------------------------")
-    
+    if zacks_scraper.is_website_scraped():
+        stocks_set.add(zacks_scraper.return_stocks())
+        zacks_scraper.print_stocks()
+        break
 
-    stocks_remaining = True
-    #run for rest of day
-    while stocks_remaining:
-        for stock in bought_stocks.keys():
-            buy_price = bought_stocks[stock]
-            current_price = Stock(stock).get_price()
-            #print(stock + ": " + "Buy price: " + str(buy_price) + " Current price: " + str(current_price))
-            if (current_price > (buy_price*1.01)):
-                print("Selling " + stock + " Buy price: " + str(buy_price) + " Sell price: " +str(current_price))
-                del bought_stocks[stock]
-            elif (current_price < (buy_price*.98)):
-                print("Selling " + stock + " Buy price: " + str(buy_price) + " Sell price: " +str(current_price))
-                del bought_stocks[stock]
-            elif (current_price == buy_price):
-                pass
-                #print("Selling " + stock + " Buy price: " + str(buy_price) + " Sell price: " +str(current_price))
-                #del bought_stocks[stock]
-        stocks_remaining = bool(bought_stocks) 
-  
+#init stock dict
+bought_stocks = {}
+cross_verified_stocks = {}
+for i in stocks_set:
+    for j in i:
+        if j not in bought_stocks:
+            bought_stocks[j] = Stock(j).get_price()
+print("Bought these stocks: ")
+print(bought_stocks)
+print("----------------------------------------------------------------------------------------------------------")
+
+
+stocks_remaining = True
+#run for rest of day
+while stocks_remaining:
+    for stock in bought_stocks.keys():
+        buy_price = bought_stocks[stock]
+        current_price = Stock(stock).get_price()
+        #print(stock + ": " + "Buy price: " + str(buy_price) + " Current price: " + str(current_price))
+        if (current_price > (buy_price*1.01)):
+            print("Selling " + stock + " Buy price: " + str(buy_price) + " Sell price: " +str(current_price))
+            del bought_stocks[stock]
+        elif (current_price < (buy_price*.98)):
+            print("Selling " + stock + " Buy price: " + str(buy_price) + " Sell price: " +str(current_price))
+            del bought_stocks[stock]
+        elif (current_price == buy_price):
+            pass
+            #print("Selling " + stock + " Buy price: " + str(buy_price) + " Sell price: " +str(current_price))
+            #del bought_stocks[stock]
+    stocks_remaining = bool(bought_stocks) 
+

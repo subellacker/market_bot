@@ -1,0 +1,25 @@
+----------------------------------------------------------------------------------------------------------
+Timestamp: 2018-08-30 19:28:49
+Parsing Zacks Rank...
+Finding appropriate link in main page...
+Bull of the Day: NVMI
+Text Verification: Zacks #1 Rank Additions for : August 30,2018
+Link Verification: https://www.zacks.com/commentary/179191/new-strong-buy-stocks-for-august-30th
+Base url verified: True
+------------------------------------
+Timestamp: 2018-08-30 19:28:52
+Parsing article page...
+System date: August 30, 2018
+Article date: August 30, 2018
+Dates match: True
+Article Title: New Strong Buy Stocks for August 30th - August 30, 2018 - Zacks.com
+Stocks recommeded from article: set(['JCOM', 'ALL', 'NCS', 'NVMI', 'IR', 'BHP'])
+Top stocks verified: True
+------------------------------------
+Timestamp: 2018-08-30 19:28:55
+Zacks verification status: True
+Zacks recommends these stocks: set(['JCOM', 'ALL', 'NCS', 'NVMI', 'IR', 'BHP'])
+----------------------------------------------------------------------------------------------------------
+Bought these stocks: 
+{"JCOM": 83.56, "ALL": 100.03, "NCS": 17.1, "NVMI": 29.91, "IR": 101.13, "BHP": 48.69}
+----------------------------------------------------------------------------------------------------------
